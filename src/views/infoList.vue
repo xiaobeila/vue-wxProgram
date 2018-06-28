@@ -1,20 +1,26 @@
 <template>
   <div class="container">
-    <!-- <swiper autoplay, indicator-dots, circular>
-      <swiper-item v-for="item of informationBanner" v-bind:key="item">
-        <img v-bind:src="item.image" class="slide-image" width="355" height="150" />
-      </swiper-item>
-    </swiper> -->
+     <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="item in informationBanner" :style="{ backgroundImage: 'url(' + item.image + ')' }" :key="item.image"></div>
+        </div>
+        <div class="swiper-pagination swiper-pagination-white"></div>
+    </div>
     <div class="news-wrap">
-        <news-item v-for="item of information" :news="item" :key="item.newsid"></news-item>
+      <news-item v-for="item of information" :news="item" :key="item.newsid"></news-item>
     </div>
     <div class="nomore">只给看这么多</div>
   </div>
 </template>
 
 <script>
-import { getInfoList } from '@/api/api'
+import {
+  getInfoList
+} from '@/api/api'
 import newsItem from '@/components/news-item'
+
+import Swiper from 'swiper'
+import 'swiper/dist/css/swiper.min.css'
 
 // const uiti = global.uiti
 
@@ -24,10 +30,19 @@ export default {
       page: 1,
       hasMore: true,
       information: [],
-      informationBanner: []
+      informationBanner: [],
+      swiperOption: {
+        pagination: {
+          el: '.swiper-pagination'
+        }
+      },
+      listImg: [{
+        url: 'http://fq-img.cnicchina.com/FsL8oTxUgYOzT-o1x1urBkYIztl5'
+      }, {
+        url: 'http://fq-img.cnicchina.com/Frnk8tEOq0rUEJsNyZEXE9_OLjRQ'
+      }]
     }
   },
-
   created () {
     // console.log(uiti.formatTime('2018-04-03'))
   },
@@ -35,10 +50,19 @@ export default {
     newsItem
   },
 
-  computed: {
-  },
+  computed: {},
 
   mounted () {
+    var swiper = new Swiper('.swiper-container', {
+      pagination: '.swiper-pagination',
+      paginationClickable: true,
+      loop: true,
+      speed: 600,
+      autoplay: 1000,
+      onTouchEnd: function () {
+        swiper.startAutoplay()
+      }
+    })
     this.getInfoList()
   },
 
@@ -46,7 +70,13 @@ export default {
     async getInfoList () {
       if (!this.hasMore) return
 
-      let data = await getInfoList({ page: this.page++ })
+      let data = await getInfoList({
+        page: this.page++
+      })
+      //  轮播图
+      if (data.data.informationBanner.length) {
+        this.informationBanner = data.data.informationBanner
+      }
       // 资讯列表
       if (data.data.information.items.length) {
         this.information.push.apply(this.information, data.data.information.items)
@@ -76,35 +106,30 @@ export default {
 </script>
 
 <style lang="less" scoped>
-swiper {
+.swiper-container {
   width: 100%;
-  height: 200px;
+  height: 10rem;
+  .swiper-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+  .swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .swiper-pagination-bullet {
+    width: 0.833rem;
+    height: 0.833rem;
+    display: inline-block;
+    background: #7c5e53;
+  }
 }
-
-.slide-image {
-  width: 100%;
-  height: 100%;
-}
-
-swiper .wx-swiper-dot {
-  width: 10px;
-  height: 10px;
-  display: inline-flex;
-  margin-left: 20rpx;
-  justify-content: space-between;
-}
-
-swiper .wx-swiper-dot::before {
-  content: "";
-  flex-grow: 1;
-  border-radius: 50%;
-  border: 2px solid #fff;
-}
-
-swiper .wx-swiper-dot-active::before {
-  background: #fff;
-}
-
 .news-wrap {
   padding: 0 10px;
 }

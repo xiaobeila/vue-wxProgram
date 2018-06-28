@@ -30,6 +30,9 @@ export const asyncRouterMap = [
     path: '/',
     component: _import('infoList'),
     hidden: true
+  }, {
+    path: '/detail/:id',
+    component: _import('detail')
   }
 ]
 

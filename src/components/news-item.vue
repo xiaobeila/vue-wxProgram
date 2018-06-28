@@ -1,5 +1,5 @@
 <template>
-<a :href=" '/pages/detail/detail?id=' + news.id" class="news-item">
+<a :href=" '/detail/' + news.id" class="news-item">
   <div class="news-text">
     <div class="news-title">{{news.title}}</div>
     <div class="news-info">

@@ -11,3 +11,15 @@ export function getInfoList (param) {
     data: param
   })
 }
+
+/**
+ * 资讯详情
+ * @param {*page} param
+ */
+export function getDetail (param) {
+  return fetch({
+    url: '/api/information/detail/' + param.id,
+    method: 'get',
+    data: param
+  })
+}
